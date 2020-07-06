@@ -1,7 +1,6 @@
 # miniAutoDock-GPU 
-# ================ 
 
- A miniapp based on AutoDock-GPU https://github.com/ccsb-scripps/AutoDock-GPU\ 
+ A miniapp based on AutoDock-GPU https://github.com/ccsb-scripps/AutoDock-GPU 
 
 This app mainly focuses the performance portability and targets NVIDIA and AMD GPUs 
  
@@ -23,7 +22,7 @@ make DEVICE=<TYPE> NUMWI=<NWI> CARD=<VENDOR>
 |:----------:|:----------------------:|:--------------------------------------------------:|
 | `<TYPE>`   | Accelerator chosen     | `CPU`, `GPU`                                       |
 | `<NWI>`    | OpenCL work-group size | `1`, `2`, `4`, `8`, `16`, `32`, `64`, `128`, `256` |
-| `<CARD>`   | GPU vendor/typ         | `NVIDIA`, `AMD`                                    |
+| `<CARD>`   | GPU vendor/type         | `NVIDIA`, `AMD`                                    |
 
 
 After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;wi** is placed under [bin](./bin).
@@ -48,7 +47,7 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 |:-----------------:|:-------------:|:-------------------------:|
 | -ffile            |Protein file   |&lt;protein&gt;.maps.fld   |
 | -lfile            |Ligand file    |&lt;ligand&gt;.pdbqt       |
-| -nrun		    |               |                           |	
+| -nrun		    | # LGA runs    |&lt;nruns&gt;              |	
 
 ## Example 
 
