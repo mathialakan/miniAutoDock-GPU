@@ -16,13 +16,14 @@ This app mainly focuses the performance portability and targets NVIDIA and AMD G
 # Compilation 
 
 ```zsh 
-make DEVICE=<TYPE> NUMWI=<NWI> CARD=<VENDOR> 
+make DEVICE=<TYPE> API=<SUPPORT> CARD=<VENDOR> NUMWI=<NWI>  
 ``` 
 |  Prameters | Description            | Values                                             |
 |:----------:|:----------------------:|:--------------------------------------------------:|
 | `<TYPE>`   | Accelerator chosen     | `CPU`, `GPU`                                       |
-| `<NWI>`    | OpenCL work-group size | `1`, `2`, `4`, `8`, `16`, `32`, `64`, `128`, `256` |
+| `<SUPPORT>`   | API chosen     | `CUDA`, `HIP`, `KOKKOS`                                       |
 | `<CARD>`   | GPU vendor/type         | `NVIDIA`, `AMD`                                    |
+| `<NWI>`    | work-group size | `1`, `2`, `4`, `8`, `16`, `32`, `64`, `128`, `256` |
 
 
 After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;wi** is placed under [bin](./bin).

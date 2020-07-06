@@ -7,39 +7,33 @@
 # if DEVICE=CPU: CPU_INCLUDE_PATH?, CPU_LIBRARY_PATH?
 # if DEVICE=GPU: GPU_INCLUDE_PATH?, GPU_LIBRARY_PATH?
 #
-# Cuda will be automatically detect and used as the
-# when these conditions are true:
-#      - DEVICE=CUDA *XOR*
-#      - DEVICE=GPU *AND*
-#      - nvcc exists *AND*
-#      - GPU_INCLUDE_PATH =<path to Cuda includes> *AND*
-#      - GPU_LIBRARRY_PATH=<path to Cuda libraries> *AND*
-#      - a test code (including cuda_runtime_api.h,
-#        and linking to -lcuda and -lcudart) is
-#        succesfully compiled
-# in any other case, OpenCL will be used
-# OpenCL GPU path can be explicitly used with
-# DEVICE=OCLGPU
 # ------------------------------------------------------
-# Choose OpenCL device
-# Valid values: CPU, GPU, CUDA, OCLGPU
 
-ifeq ($(DEVICE), $(filter $(DEVICE),GPU CUDA))
+# DEVICE 
+# Possible values for DEVICE: CPU, GPU
+# API
+# Possible values for API: CUDA, HIP, KOKKOS
+# VENDOR
+# Possible values for CARD: NVIDIA, AMD
+
+
+#ifeq ($(DEVICE), $(filter $(DEVICE),GPU CUDA))
+ifeq ($(API), CUDA)
 TEST_CUDA := $(shell ./test_cuda.sh nvcc "$(GPU_INCLUDE_PATH)" "$(GPU_LIBRARY_PATH)")
-# if user specifies DEVICE=CUDA it will be used (wether the test succeeds or not)
+# if user specifies API=CUDA it will be used (wether the test succeeds or not)
 # if user specifies DEVICE=GPU the test result determines wether CUDA will be used or not
-ifeq ($(DEVICE)$(TEST_CUDA),GPUyes)
-override DEVICE:=CUDA
+ifeq ($(API)$(TEST_CUDA),GPUyes)
+override API:=CUDA
 endif
 endif
-ifeq ($(DEVICE),CUDA)
+ifeq ($(API),CUDA)
 override DEVICE:=GPU
 export
 include Makefile.Cuda
 else
-ifeq ($(DEVICE),OCLGPU)
+ifeq ($(API),HIP)
 override DEVICE:=GPU
 export
 endif
-include Makefile.OpenCL
+include Makefile.Hip
 endif
