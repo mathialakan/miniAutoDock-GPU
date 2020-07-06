@@ -1,12 +1,12 @@
-#miniAutoDock-GPU 
-#================ 
+# miniAutoDock-GPU 
+# ================ 
 
  A miniapp based on AutoDock-GPU https://github.com/ccsb-scripps/AutoDock-GPU\ 
 
 This app mainly focuses the performance portability and targets NVIDIA and AMD GPUs 
  
 
-#Programming Base (API/ Model) 
+# Programming Base (API/ Model) 
 
 * CUDA 
 * HIP 
