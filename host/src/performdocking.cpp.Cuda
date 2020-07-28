@@ -549,9 +549,9 @@ filled with clock() */
 	cData.dockpars.qasp 		                = mypars->qasp;
 	cData.dockpars.smooth 	                    = mypars->smooth;
 	cData.dockpars.lsearch_rate                 = mypars->lsearch_rate;
-    cData.dockpars.adam_beta1                   = mypars->adam_beta1;
-    cData.dockpars.adam_beta2                   = mypars->adam_beta2;
-    cData.dockpars.adam_epsilon                 = mypars->adam_epsilon;
+//    cData.dockpars.adam_beta1                   = mypars->adam_beta1;
+//    cData.dockpars.adam_beta2                   = mypars->adam_beta2;
+//    cData.dockpars.adam_epsilon                 = mypars->adam_epsilon;
 
 	if (cData.dockpars.lsearch_rate != 0.0f) 
 	{

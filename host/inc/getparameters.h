@@ -52,8 +52,8 @@ typedef struct
 	unsigned long num_of_energy_evals;
 	unsigned long num_of_generations;
 		bool nev_provided;
-		bool use_heuristics;
-	unsigned long heuristics_max;
+//		bool use_heuristics;
+//	unsigned long heuristics_max;
 		float abs_max_dmov;
 		float abs_max_dang;
 		float mutation_rate;
@@ -91,9 +91,9 @@ typedef struct
 		char  resname [128];
 		float qasp;
 		float rmsd_tolerance;
-		float adam_beta1;
-		float adam_beta2;
-		float adam_epsilon;
+//		float adam_beta1;
+//		float adam_beta2;
+//		float adam_epsilon;
 } Dockpars;
 
 
