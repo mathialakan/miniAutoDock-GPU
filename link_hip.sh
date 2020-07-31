@@ -1,5 +1,5 @@
 #!/bin/bash
-# Link Cuda code files for compilation
+# Link Hip code files for compilation
 
 ln -sf performdocking.h.Hip host/inc/performdocking.h
 ln -sf performdocking.cpp.Hip host/src/performdocking.cpp

@@ -54,7 +54,7 @@ gpu_sum_evals_kernel()
 
 void gpu_sum_evals(uint32_t blocks, uint32_t threadsPerBlock)
 {
-    hipLanuchKernelGGL(gpu_sum_evals_kernel, dim3(blocks), dim3(threadsPerBlock), 0, 0);
+    hipLaunchKernelGGL(gpu_sum_evals_kernel, dim3(blocks), dim3(threadsPerBlock), 0, 0);
     LAUNCHERROR("gpu_sum_evals_kernel");
 #if 0
     hipError_t status;

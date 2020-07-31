@@ -90,18 +90,20 @@ int get_filenames_and_ADcoeffs(const int* argc,
 	mypars->coeffs = coeffs_bound;	//default coeffs
 	mypars->unbound_model = 0;
 
-	ffile_given = 0;
+	ffile_given = 1;
 	lfile_given = 0;
+
+	strcpy(mypars->fldfile, "./input/7cpa/7cpa_protein.maps.fld");
 
 	for (i=1; i<(*argc)-1; i++)
 	{
 		//Argument: grid parameter file name.
-		if (strcmp("-ffile", argv[i]) == 0)
+/*		if (strcmp("-ffile", argv[i]) == 0)
 		{
 			ffile_given = 1;
 			strcpy(mypars->fldfile, argv[i+1]);
 		}
-
+*/
 		//Argument: ligand pdbqt file name
 		if (strcmp("-lfile", argv[i]) == 0)
 		{
@@ -135,12 +137,12 @@ int get_filenames_and_ADcoeffs(const int* argc,
 		}
 	}
 
-	if (ffile_given == 0 )
+/*	if (ffile_given == 0 )
 	{
 		printf("Error: grid fld file was not defined. Use -ffile argument!\n");
 		return 1;
 	}
-
+*/
 	if (lfile_given == 0 )
 	{
 		printf("Error: ligand pdbqt file was not defined. Use -lfile argument!\n");
@@ -176,9 +178,6 @@ void get_commandpars(const int* argc,
 	mypars->mutation_rate		= 2; 		// 2%
 	mypars->crossover_rate		= 80;		// 80%
 	mypars->lsearch_rate		= 80;		// 80%
-//	mypars->adam_beta1		= 0.9f;
-//	mypars->adam_beta2		= 0.999f;
-//	mypars->adam_epsilon		= 1.0e-8f;
 
 	strcpy(mypars->ls_method, "sw");		// "sw": Solis-Wets. 
 							// The following possible methods are not considered here
@@ -224,9 +223,9 @@ void get_commandpars(const int* argc,
 		// UPDATED in : get_filenames_and_ADcoeffs()
 		// ---------------------------------
 		//Argument: name of grid parameter file.
-		if (strcmp("-ffile", argv [i]) == 0)
+/*		if (strcmp("-ffile", argv [i]) == 0)
 			arg_recognized = 1;
-
+*/
 		// ---------------------------------
 		// MISSING: char ligandfile [128]
 		// UPDATED in : get_filenames_and_ADcoeffs()

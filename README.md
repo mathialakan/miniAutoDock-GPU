@@ -39,14 +39,12 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 
 ```zsh 
 ./bin/autodock_<type>_<N>wi \ 
--ffile <protein>.maps.fld \ 
 -lfile <ligand>.pdbqt \ 
 -nrun <nruns> 
 ``` 
 
 | Mandatory options | Description   | Value                     |
 |:-----------------:|:-------------:|:-------------------------:|
-| -ffile            |Protein file   |&lt;protein&gt;.maps.fld   |
 | -lfile            |Ligand file    |&lt;ligand&gt;.pdbqt       |
 | -nrun		    | # LGA runs    |&lt;nruns&gt;              |	
 
@@ -54,7 +52,6 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 
 ```zsh 
 ./bin/autodock_gpu_64wi \ 
--ffile ./input/1stp/derived/1stp_protein.maps.fld \ 
 -lfile ./input/1stp/derived/1stp_ligand.pdbqt \ 
 -nrun 10 
 ``` 
