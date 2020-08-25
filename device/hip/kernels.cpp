@@ -50,8 +50,8 @@ __device__ inline int64_t ullitolli(uint64_t u)
         float v1    = v0; \
         int k1      = k0; \
         int otgx    = tgx ^ mask; \
-        float v2    = __shfl_sync(0xffffffff, v0, otgx); \
-        int k2      = __shfl_sync(0xffffffff, k0, otgx); \
+        float v2    = __shfl(0xffffffff, v0, otgx); \
+        int k2      = __shfl(0xffffffff, k0, otgx); \
         int flag    = ((v1 < v2) ^ (tgx > otgx)) && (v1 != v2); \
         k0          = flag ? k1 : k2; \
         v0          = flag ? v1 : v2; \
@@ -71,14 +71,14 @@ __device__ inline int64_t ullitolli(uint64_t u)
     } \
     __threadfence(); \
     __syncthreads(); \
-    if (__any_sync(0xffffffff, value != 0)) \
+    if (__any(0xffffffff, value != 0)) \
     { \
         uint32_t tgx            = threadIdx.x & cData.warpmask; \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 1); \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 2); \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 4); \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 8); \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 16); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 1); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 2); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 4); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 8); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 16); \
         if (tgx == 0) \
         { \
             atomicAdd(pAccumulator, value); \
@@ -117,14 +117,14 @@ __device__ inline int64_t ullitolli(uint64_t u)
     } \
     __threadfence(); \
     __syncthreads(); \
-    if (__any_sync(0xffffffff, value != 0.0f)) \
+    if (__any(0xffffffff, value != 0.0f)) \
     { \
         uint32_t tgx            = threadIdx.x & cData.warpmask; \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 1); \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 2); \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 4); \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 8); \
-        value                  += __shfl_sync(0xffffffff, value, tgx ^ 16); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 1); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 2); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 4); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 8); \
+        value                  += __shfl(0xffffffff, value, tgx ^ 16); \
         if (tgx == 0) \
         { \
             atomicAdd(pAccumulator, value); \

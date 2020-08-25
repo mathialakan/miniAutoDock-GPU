@@ -3,4 +3,4 @@
 
 ln -sf performdocking.h.Cuda host/inc/performdocking.h
 ln -sf performdocking.cpp.Cuda host/src/performdocking.cpp
-
+ln -sf GpuData.h.Cuda host/inc/GpuData.h
