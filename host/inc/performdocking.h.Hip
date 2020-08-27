@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "calcenergy.h"
 #include "processresult.h"
 #include "simulation_state.hpp"
-#include "../../deveice/hip/GpuData.h"
+#include "GpuData.h"
 
 
 #define ELAPSEDSECS(stop,start) ((float) stop-start)/((float) CLOCKS_PER_SEC)

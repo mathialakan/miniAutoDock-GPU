@@ -80,7 +80,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "autostop.hpp"
 #include "performdocking.h"
 #include "correct_grad_axisangle.h"
-#include "../../deveice/hip/GpuData.h"
+#include "GpuData.h"
 
 
 // CUDA kernels
@@ -150,7 +150,7 @@ void setup_gpu_for_docking(GpuData& cData, GpuTempData& tData)
 
     // Initialize CUDA
     int device                                      = -1;
-    int gpuCount                                    = 0;
+    int gpuCount                                    = 1;
     hipError_t status;
     status = hipGetDeviceCount(&gpuCount);
     RTERROR(status, "hipGetDeviceCount failed");
@@ -168,8 +168,8 @@ void setup_gpu_for_docking(GpuData& cData, GpuTempData& tData)
 	    status = hipFree(NULL);   // Trick driver into creating context on current device
     else
 	    status = hipSetDevice(cData.devnum);
-    status = hipDeviceSetLimit(hipLimitPrintfFifoSize, 200000000ull);
-    RTERROR(status, "hipDeviceSetLimit failed");      
+    //status = hipDeviceSetLimit(hipLimitPrintfFifoSize, 200000000ull);
+    //RTERROR(status, "hipDeviceSetLimit failed");      
 
     auto const t1 = std::chrono::steady_clock::now();
     printf("\nCUDA Setup time %fs\n", elapsed_seconds(t0 ,t1));

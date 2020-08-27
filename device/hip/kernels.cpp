@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "calcenergy.h"
 #include "GpuData.h"
 #include "hip/hip_runtime.h"
-
+/*
 __device__ inline uint64_t llitoulli(int64_t l)
 {
     uint64_t u;
@@ -43,7 +43,7 @@ __device__ inline int64_t ullitolli(uint64_t u)
     asm("mov.b64    %0, %1;" : "=l"(l) : "l"(u));
     return l;
 }
-
+*/
 
 #define WARPMINIMUMEXCHANGE(tgx, v0, k0, mask) \
     { \
@@ -71,7 +71,7 @@ __device__ inline int64_t ullitolli(uint64_t u)
     } \
     __threadfence(); \
     __syncthreads(); \
-    if (__any(0xffffffff, value != 0)) \
+    if (__any(0xffffffff)) \
     { \
         uint32_t tgx            = threadIdx.x & cData.warpmask; \
         value                  += __shfl(0xffffffff, value, tgx ^ 1); \
@@ -117,7 +117,7 @@ __device__ inline int64_t ullitolli(uint64_t u)
     } \
     __threadfence(); \
     __syncthreads(); \
-    if (__any(0xffffffff, value != 0.0f)) \
+    if (__any(0xffffffff)) \
     { \
         uint32_t tgx            = threadIdx.x & cData.warpmask; \
         value                  += __shfl(0xffffffff, value, tgx ^ 1); \
@@ -144,8 +144,8 @@ static GpuData cpuData;
 void SetKernelsGpuData(GpuData* pData)
 {
     hipError_t status;
-    status = hipMemcpyToSymbol(HIP_SYMBOL(cData), pData, sizeof(GpuData));
-    RTERROR(status, "SetKernelsGpuData copy to cData failed");
+    status = hipMemcpyToSymbol(HIP_SYMBOL(cData), &pData, sizeof(GpuData), 0, hipMemcpyHostToDevice);
+    //RTERROR(status, "SetKernelsGpuData copy to cData failed");
     memcpy(&cpuData, pData, sizeof(GpuData));
 }
 
