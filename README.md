@@ -22,7 +22,7 @@ make DEVICE=<TYPE> API=<SUPPORT> CARD=<VENDOR> NUMWI=<NWI>
 |:----------:|:----------------------:|:--------------------------------------------------:|
 | `<TYPE>`   | Accelerator chosen     | `CPU`, `GPU`                                       |
 | `<SUPPORT>`   | API chosen     | `CUDA`, `HIP`, `KOKKOS`                                       |
-| `<CARD>`   | GPU vendor/type         | `NVIDIA`, `AMD`                                    |
+| `<VENDOR>`   | GPU vendor/type         | `NVIDIA`, `AMD`                                    |
 | `<NWI>`    | work-group size | `1`, `2`, `4`, `8`, `16`, `32`, `64`, `128`, `256` |
 
 
@@ -52,7 +52,7 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 
 ```zsh 
 ./bin/autodock_gpu_64wi \ 
--lfile ./input/1stp/derived/1stp_ligand.pdbqt \ 
+-lfile ./input/7cpa/7cpa_ligand.pdbqt  \ 
 -nrun 10 
 ``` 
 
