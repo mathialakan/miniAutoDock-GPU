@@ -88,7 +88,6 @@ int main(int argc, char* argv[])
 	double time_start, idle_timer;
 #endif
 	double total_setup_time=0;
-//	double total_processing_time=0;
 	double total_exec_time=0;
 //	double idle_time;
 
@@ -100,6 +99,7 @@ int main(int argc, char* argv[])
 	Kokkos::View<float*,HostType> floatgrids = Kokkos::View<float*,HostType>("floatgrids0", 0);
 #else
 
+	double total_processing_time=0;
 	std::vector<float> floatgrids;
 	GpuData cData;
 	GpuTempData tData;
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 		Liganddata myxrayligand;
 	        SimulationState sim_state;
 #ifndef _WIN32
-	        timeval setup_timer, exec_timer; // processing_timer;
+	        timeval setup_timer, exec_timer,  processing_timer;
 #else
 		double setup_timer, exec_timer, processing_timer;
 #endif

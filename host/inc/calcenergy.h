@@ -77,9 +77,6 @@ typedef struct
 	unsigned int 	cons_limit;
 	unsigned int 	max_num_of_iters;
 	float  		qasp;
-//	float adam_beta1;
-//	float adam_beta2;
-//	float adam_epsilon;
 } Dockparameters;
 
 // ----------------------------------------------------------------------
@@ -126,6 +123,7 @@ typedef struct
        int  num_rotating_atoms_per_rotbond [MAX_NUM_OF_ROTBONDS];
 } kernelconstant;
 */
+#ifndef USE_KOKKOS
 
 typedef struct
 {
@@ -195,11 +193,18 @@ int prepare_const_fields_for_gpu(Liganddata* 	   		myligand_reference,
 				 kernelconstant_conform*	KerConst_conform,
 				 kernelconstant_grads*          KerConst_grads);
 
+#endif
+
 void make_reqrot_ordering(int number_of_req_rotations[MAX_NUM_OF_ATOMS],
 			  int atom_id_of_numrots[MAX_NUM_OF_ATOMS],
 		          int num_of_atoms);
-
+#ifdef USE_KOKKOS
+int gen_rotlist(Liganddata& myligand,
+		int         rotlist[MAX_NUM_OF_ROTATIONS]);
+#else
 int gen_rotlist(Liganddata* myligand,
 		int         rotlist[MAX_NUM_OF_ROTATIONS]);
+
+#endif
 
 #endif /* CALCENERGY_H_ */

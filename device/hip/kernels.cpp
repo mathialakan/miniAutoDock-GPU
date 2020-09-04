@@ -138,13 +138,14 @@ __device__ inline int64_t ullitolli(uint64_t u)
 #endif
 
 
-static __device__  __constant__ GpuData cData;
+//static
+ __constant__ GpuData cData;
 static GpuData cpuData;
 
 void SetKernelsGpuData(GpuData* pData)
 {
     hipError_t status;
-    status = hipMemcpyToSymbol(HIP_SYMBOL(cData), pData, sizeof(GpuData), 0, hipMemcpyHostToDevice);
+    status = hipMemcpyToSymbol(cData, pData, sizeof(GpuData), 0, hipMemcpyHostToDevice);
     RTERROR(status, "SetKernelsGpuData copy to cData failed");
     memcpy(&cpuData, pData, sizeof(GpuData));
 }
@@ -152,7 +153,7 @@ void SetKernelsGpuData(GpuData* pData)
 void GetKernelsGpuData(GpuData* pData)
 {
     hipError_t status;
-    status = hipMemcpyFromSymbol(pData, HIP_SYMBOL(cData), sizeof(GpuData));
+    status = hipMemcpyFromSymbol(pData, cData, sizeof(GpuData));
     RTERROR(status, "GetKernelsGpuData copy From cData failed");
 }
 
