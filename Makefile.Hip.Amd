@@ -37,7 +37,8 @@ HOST_SRC_DIR=./host/src
 KRNL_DIR=./device/hip
 KCMN_DIR=$(COMMON_DIR)
 BIN_DIR=./bin
-LIB_HIP = -lhip_hcc kernels.o 
+#LIB_HIP = -lhip_hcc kernels.o 
+LIB_HIP = -lamdhip64 kernels.o 
 
 
 # Host sources
