@@ -1,1 +1,1 @@
-performdocking.cpp.Cuda
+performdocking.cpp.Kokkos

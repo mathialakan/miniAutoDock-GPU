@@ -1,6 +1,6 @@
 #!/bin/bash
 
- ROCMV=3.3.0
+ ROCMV=3.7.0
  CARD=hcc
 
  module load rocm/${ROCMV} cuda10.2/toolkit

@@ -28,19 +28,25 @@ endif
 endif
 
 ifeq ($(API),CUDA)
-override DEVICE:=GPU
-export
-include Makefile.Cuda
+ override DEVICE:=GPU
+ export
+ include Makefile.Cuda
 else
 ifeq ($(API),HIP)
-override DEVICE:=GPU
-export
-ifeq ($(CARD), NVIDIA)
-include Makefile.Hip.Nvidia
+  override DEVICE:=GPU
+  export
+  ifeq ($(CARD), NVIDIA)
+   include Makefile.Hip.Nvidia
+  else
+  ifeq ($(CARD), AMD)
+   include Makefile.Hip.Amd
+  endif
+  endif
 else
-ifeq ($(CARD), AMD)
-include Makefile.Hip.Amd
-endif
+ifeq ($(API), KOKKOS)
+  override DEVICE:=GPU
+  export
+  include Makefile.Kokkos
 endif
 endif
 endif

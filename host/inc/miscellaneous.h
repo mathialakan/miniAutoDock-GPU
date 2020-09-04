@@ -37,7 +37,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #define PI 3.14159265359
 
 #define PHI 0x9e3779b9
-
+//Visual C++ linear congruential generator constants
+#ifdef USE_KOKKOS
+ #define RAND_A_GS 214013u
+ #define RAND_C_GS 2531011u
+#endif
 typedef struct
 //Struct which describes a quaternion.
 {
@@ -153,4 +157,11 @@ public:
 	}
 };
 
+
+#ifdef USE_KOKKOS
+double myrand(void);
+unsigned int myrand_int(unsigned int);
+unsigned int genseed(unsigned int init);
+
+#endif
 #endif /* MISCELLANEOUS_H_ */

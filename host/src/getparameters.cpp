@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <locale>
 
 #include "getparameters.h"
-
+/*
 // trim from start (in place)
 static inline void ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
@@ -50,7 +50,7 @@ static inline void trim(std::string &s) {
     ltrim(s);
     rtrim(s);
 }
-
+*/
 
 int get_filenames_and_ADcoeffs(const int* argc,
 			       char** argv,
@@ -60,7 +60,8 @@ int get_filenames_and_ADcoeffs(const int* argc,
 //according to the proper command line arguments.
 {
 	int i;
-	int ffile_given, lfile_given;
+	//int ffile_given;
+	int  lfile_given;
 	long tempint;
 
 	//AutoDock 4 free energy coefficients
@@ -90,7 +91,7 @@ int get_filenames_and_ADcoeffs(const int* argc,
 	mypars->coeffs = coeffs_bound;	//default coeffs
 	mypars->unbound_model = 0;
 
-	ffile_given = 1;
+	//ffile_given = 1;
 	lfile_given = 0;
 
 	strcpy(mypars->fldfile, "./input/7cpa/7cpa_protein.maps.fld");
@@ -163,7 +164,7 @@ void get_commandpars(const int* argc,
 {
 	int   i;
 	long  tempint;
-	float tempfloat;
+	//float tempfloat;
 	int   arg_recognized;
 
 	// ------------------------------------------
@@ -280,10 +281,11 @@ void gen_initpop_and_reflig(Dockpars*       mypars,
 //the function moves myligand to origo and scales it according to grid spacing.
 {
 	int entity_id, gene_id;
-	int gen_pop, gen_seeds;
+	int gen_pop;
+	//int  gen_seeds;
 	FILE* fp;
 	int i;
-	float init_orientation[MAX_NUM_OF_ROTBONDS+6];
+	//float init_orientation[MAX_NUM_OF_ROTBONDS+6];
 	double movvec_to_origo[3];
 
 	int pop_size = mypars->pop_size;

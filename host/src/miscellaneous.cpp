@@ -518,3 +518,47 @@ int strincmp(const char* str1, const char* str2, int num)
 }
 #endif
 
+#ifdef USE_KOKKOS
+double myrand(void)
+//The functon returns a random double number between 0 and 1
+{
+	static int first_call = 0;
+	double temprand;
+
+	if (first_call == 0)
+	{
+		srand((unsigned int) time(NULL)); // Use time as the randomization seed
+		first_call++;
+	}
+
+	do
+		temprand = ((double) rand())/((double) RAND_MAX);
+	while ((temprand == 0.0) || (temprand == 1.0));
+
+	return temprand;
+}
+
+unsigned int myrand_int(unsigned int limit)
+//The function returns a random integer which is lower than the given limit.
+{
+	return (unsigned int) floor(limit*myrand());
+}
+
+unsigned int genseed(unsigned int init)
+//The function generates random numbers with a linear congruential generator,
+//using Visual C++ generator constants.
+//The generator can be initialized with the init parameter.
+//If the parameter is 0, a new random value will be
+//returned (and init won't be used).
+
+{
+	static unsigned int state = 0;
+
+	if (init != 0)
+		state = init;
+	else
+		state = (RAND_A_GS*state+RAND_C_GS);
+
+	return state;
+}
+#endif

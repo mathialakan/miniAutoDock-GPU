@@ -68,7 +68,8 @@ int init_liganddata(const char* ligfilename,
 				fseek(fp, 25, SEEK_CUR);
 			else
 				fseek(fp, 27, SEEK_CUR);
-                        int result;
+                        
+			int result;
 			result = fscanf(fp, "%*f");		//skipping fields
 			result = fscanf(fp, "%*f");
 			result = fscanf(fp, "%*f");
@@ -1148,11 +1149,11 @@ int gen_new_pdbfile(const char* oldpdb, const char* newpdb, const Liganddata* my
 	FILE* fp_new;
 	char tempstr [256];
 	char tempstr_short [32];
-	int acnt_oldlig, acnt_newlig;
+	int acnt_oldlig; // acnt_newlig;
 	int i,j;
 
 	acnt_oldlig = 0;
-	acnt_newlig = 0;
+	//acnt_newlig = 0;
 
 	fp_old = fopen(oldpdb, "rb"); // fp_old = fopen(oldpdb, "r");
 	if (fp_old == NULL)

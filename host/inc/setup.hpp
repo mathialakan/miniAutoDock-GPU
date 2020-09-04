@@ -30,11 +30,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdlib.h>
 #include <vector>
 
+#ifdef USE_KOKKOS
+#include <Kokkos_Core.hpp>
+#include "kokkos_settings.hpp"
+#endif
+
 #include "processgrid.h"
 #include "miscellaneous.h"
 #include "processligand.h"
 #include "getparameters.h"
 
+#ifdef USE_KOKKOS
+int setup(Gridinfo&		mygrid,
+	  Kokkos::View<float*,HostType>& floatgrids,
+	  Dockpars&		mypars,
+	  Liganddata&		myligand_init,
+	  Liganddata&		myxrayligand,
+	  int 	                i_file,
+	  int			argc,
+	  char*			argv[]);
+
+#else
 
 int load_all_maps (const char* fldfilename,
 		   const Gridinfo* mygrid,
@@ -54,5 +70,6 @@ int setup(std::vector<Map>&	all_maps,
 	  int 	                i_file,
 	  int			argc,
 	  char*			argv[]);
+#endif
 
 #endif

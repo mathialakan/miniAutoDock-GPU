@@ -86,7 +86,7 @@ void make_resfiles(	      float* final_population,
 		   	      char** argv,
 		   		int  debug,
 		   		int  run_cnt,
-				float& best_energy_of_all,
+		//		float& best_energy_of_all,
 		   Ligandresult* best_result);
 
 void cluster_analysis(     Ligandresult myresults [],
@@ -109,9 +109,9 @@ void clusanal_gendlg(Ligandresult myresults [],
                                char**  argv,
                      const double docking_avg_runtime,
 		     unsigned long generations_used,
-		     unsigned long evals_performed,
-		     double exec_time,
-		     double idle_time);
+		     unsigned long evals_performed);
+//		     double exec_time,
+//		     double idle_time);
 
 void process_result(    const Gridinfo*         mygrid, 
                         const float*            cpu_floatgrids,

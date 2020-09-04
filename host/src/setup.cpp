@@ -27,11 +27,108 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdlib.h>
 #include <vector>
 
+#ifdef USE_KOKKOS
+#include <Kokkos_Core.hpp>
+#include "kokkos_settings.hpp"
+#endif
+
 #include "processgrid.h"
 #include "processligand.h"
 #include "getparameters.h"
 #include "setup.hpp"
 
+#ifdef USE_KOKKOS
+int setup(Gridinfo&            mygrid,
+	  Kokkos::View<float*,HostType>& floatgrids,
+	  Dockpars&            mypars,
+	  Liganddata&          myligand_init,
+	  Liganddata&          myxrayligand,
+	  int i_file,
+	  int argc, char* argv[])
+{
+	//------------------------------------------------------------
+	// Capturing names of grid parameter file and ligand pdbqt file
+	//------------------------------------------------------------
+
+	// Filling the filename and coeffs fields of mypars according to command line arguments
+	if (get_filenames_and_ADcoeffs(&argc, argv, &mypars ) != 0)
+		{printf("\n\nError in get_filenames_and_ADcoeffs, stopped job."); return 1;}
+
+	//------------------------------------------------------------
+	// Testing command line arguments for cgmaps parameter
+	// since we need it at grid creation time
+	//------------------------------------------------------------
+	mypars.cgmaps = 0; // default is 0 (use one maps for every CGx or Gx atom types, respectively)
+	for (unsigned int i=1; i<argc-1; i+=2)
+	{
+		// ----------------------------------
+		//Argument: Use individual maps for CG-G0 instead of the same one
+		if (strcmp("-cgmaps", argv [i]) == 0)
+		{
+			int tempint;
+			sscanf(argv [i+1], "%d", &tempint);
+			if (tempint == 0)
+				mypars.cgmaps = 0;
+			else
+				mypars.cgmaps = 1;
+		}
+	}
+
+	//------------------------------------------------------------
+	// Processing receptor and ligand files
+	//------------------------------------------------------------
+
+	// Filling mygrid according to the gpf file
+	if (get_gridinfo(mypars.fldfile, &mygrid) != 0)
+		{printf("\n\nError in get_gridinfo, stopped job."); return 1;}
+
+	// Filling the atom types filed of myligand according to the grid types
+	if (init_liganddata(mypars.ligandfile, &myligand_init, &mygrid, mypars.cgmaps) != 0)
+		{printf("\n\nError in init_liganddata, stopped job."); return 1;}
+
+	// Filling myligand according to the pdbqt file
+	if (get_liganddata(mypars.ligandfile, &myligand_init, mypars.coeffs.AD4_coeff_vdW, mypars.coeffs.AD4_coeff_hb) != 0)
+		{printf("\n\nError in get_liganddata, stopped job."); return 1;}
+
+	// Resize grid
+	Kokkos::resize(floatgrids, 4*(mygrid.num_of_atypes+2)*mygrid.size_xyz[0]*mygrid.size_xyz[1]*mygrid.size_xyz[2]);
+
+	//Reading the grid files and storing values in the memory region pointed by floatgrids
+	if (get_gridvalues_f(&mygrid, floatgrids.data(), mypars.cgmaps) != 0)
+		{printf("\n\nError in get_gridvalues_f, stopped job."); return 1;}
+
+	//------------------------------------------------------------
+	// Capturing algorithm parameters (command line args)
+	//------------------------------------------------------------
+	get_commandpars(&argc, argv, &(mygrid.spacing), &mypars);
+
+	Gridinfo mydummygrid;
+	// if -lxrayfile provided, then read xray ligand data
+	if (mypars.given_xrayligandfile == true) {
+		if (init_liganddata(mypars.xrayligandfile, &myxrayligand, &mydummygrid, mypars.cgmaps) != 0)
+			{printf("\n\nError in init_liganddata, stopped job."); return 1;}
+
+		if (get_liganddata(mypars.xrayligandfile, &myxrayligand, mypars.coeffs.AD4_coeff_vdW, mypars.coeffs.AD4_coeff_hb) != 0)
+			{printf("\n\nError in get_liganddata, stopped job."); return 1;}
+	}
+
+	//------------------------------------------------------------
+	// Calculating energies of reference ligand if required
+	//------------------------------------------------------------
+/*	if (mypars.reflig_en_reqired == 1) {
+		print_ref_lig_energies_f(myligand_init,
+					 mypars.smooth,
+					 mygrid,
+					 floatgrids.data(),
+					 mypars.coeffs.scaled_AD4_coeff_elec,
+					 mypars.coeffs.AD4_coeff_desolv,
+					 mypars.qasp);
+	}
+*/
+	return 0;
+}
+
+#else
 
 int setup(std::vector<Map>& all_maps,
 	  Gridinfo&            mygrid,
@@ -251,4 +348,4 @@ int copy_from_all_maps (const Gridinfo* mygrid, float* fgrids, std::vector<Map>&
 
         return 0;
 }
-
+#endif
