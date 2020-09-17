@@ -90,9 +90,9 @@ gpu_perform_LS_kernel(
     __syncthreads();
 
     size_t offset = (run_id * cData.dockpars.pop_size + entity_id) * GENOTYPE_LENGTH_IN_GLOBMEM;
-	for (uint32_t gene_counter = threadIdx.x;
+	for (uint32_t gene_counter = hipThreadIdx_x;
 	     gene_counter < cData.dockpars.num_of_genes;
-	     gene_counter+= blockDim.x) {
+	     gene_counter+= hipBlockDim_x) {
         offspring_genotype[gene_counter] = pMem_conformations_next[offset + gene_counter];
 		genotype_bias[gene_counter] = 0.0f;
 	}
@@ -107,9 +107,9 @@ gpu_perform_LS_kernel(
 	while ((iteration_cnt < cData.dockpars.max_num_of_iters) && (rho > cData.dockpars.rho_lower_bound))
 	{
 		// New random deviate
-		for (uint32_t gene_counter = threadIdx.x;
+		for (uint32_t gene_counter = hipThreadIdx_x;
 		     gene_counter < cData.dockpars.num_of_genes;
-		     gene_counter+= blockDim.x)
+		     gene_counter+= hipBlockDim_x)
 		{
 #ifdef SWAT3
 			genotype_deviate[gene_counter] = rho*(2*gpu_randf(cData.pMem_prng_states)-1)*(gpu_randf(cData.pMem_prng_states) < gene_scale);
@@ -171,9 +171,9 @@ gpu_perform_LS_kernel(
 
 		if (candidate_energy < offspring_energy)	// If candidate is better, success
 		{
-			for (uint32_t gene_counter = threadIdx.x;
+			for (uint32_t gene_counter = hipThreadIdx_x;
 			     gene_counter < cData.dockpars.num_of_genes;
-			     gene_counter+= blockDim.x)
+			     gene_counter+= hipBlockDim_x)
 			{
 				// Updating offspring_genotype
 				offspring_genotype[gene_counter] = genotype_candidate[gene_counter];
@@ -321,10 +321,10 @@ void gpu_perform_LS(
     hipLaunchKernelGGL(gpu_perform_LS_kernel, dim3(blocks), dim3(threads), 0, 0, pMem_conformations_next, pMem_energies_next);
     LAUNCHERROR("gpu_perform_LS_kernel");     
 #if 0
-    cudaError_t status;
-    status = cudaDeviceSynchronize();
+    hipError_t status;
+    status = hipDeviceSynchronize();
     RTERROR(status, "gpu_perform_LS_kernel");
-    status = cudaDeviceReset();
+    status = hipDeviceReset();
     RTERROR(status, "failed to shut down");
     exit(0);
 #endif

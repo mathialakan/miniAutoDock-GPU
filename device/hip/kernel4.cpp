@@ -320,9 +320,9 @@ void gpu_gen_and_eval_newpops(
     LAUNCHERROR("gpu_gen_and_eval_newpops_kernel");    
 #if 0
     hipError_t status;
-    status = cudaDeviceSynchronize();
+    status = hipDeviceSynchronize();
     RTERROR(status, "gpu_gen_and_eval_newpops_kernel");
-    status = cudaDeviceReset();
+    status = hipDeviceReset();
     RTERROR(status, "failed to shut down");
     exit(0);
 #endif   
