@@ -122,7 +122,8 @@ struct GpuData {
     float*                          pMem_dependence_on_theta_const;
     float*                          pMem_dependence_on_rotangle_const;
     
-    // CUDA-specific constants
+   // warp-specific constants
+    unsigned int                    warpsize;
     unsigned int                    warpmask;
     unsigned int                    warpbits;
 };

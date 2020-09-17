@@ -58,9 +58,9 @@ void gpu_sum_evals(uint32_t blocks, uint32_t threadsPerBlock)
     LAUNCHERROR("gpu_sum_evals_kernel");
 #if 0
     hipError_t status;
-    //status = cudaDeviceSynchronize();
+    //status = hipDeviceSynchronize();
     RTERROR(status, "gpu_sum_evals_kernel");
-   // status = cudaDeviceReset();
+   // status = hipDeviceReset();
     RTERROR(status, "failed to shut down");
     exit(0);
 #endif

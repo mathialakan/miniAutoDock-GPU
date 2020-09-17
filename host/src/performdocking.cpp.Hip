@@ -83,7 +83,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "GpuData.h"
 
 
-// CUDA kernels
+//HIP kernels
 void SetKernelsGpuData(GpuData* pData);
 void GetKernelsGpuData(GpuData* pData);
 void gpu_calc_initpop(uint32_t blocks, uint32_t threadsPerBlock, float* pConformations_current, float* pEnergies_current);
@@ -148,15 +148,15 @@ void setup_gpu_for_docking(GpuData& cData, GpuTempData& tData)
 {
     auto const t0 = std::chrono::steady_clock::now();
 
-    // Initialize CUDA
+    // Initialize HIP
     int device                                      = -1;
-    int gpuCount                                    = 1;
+    int gpuCount                                    = 0;
     hipError_t status;
     status = hipGetDeviceCount(&gpuCount);
     RTERROR(status, "hipGetDeviceCount failed");
     if (gpuCount == 0)
     {
-        printf("No CUDA-capable devices found, exiting.\n");
+        printf("No HIP-capable devices found, exiting.\n");
         hipDeviceReset();
         exit(-1);
     }
@@ -172,7 +172,7 @@ void setup_gpu_for_docking(GpuData& cData, GpuTempData& tData)
     //RTERROR(status, "hipDeviceSetLimit failed");      
 
     auto const t1 = std::chrono::steady_clock::now();
-    printf("\nCUDA Setup time %fs\n", elapsed_seconds(t0 ,t1));
+    printf("\nHIP Setup time %fs\n", elapsed_seconds(t0 ,t1));
 	size_t sz_interintra_const	= MAX_NUM_OF_ATOMS*sizeof(float) + 
 					  MAX_NUM_OF_ATOMS*sizeof(uint32_t) +
 					  MAX_NUM_OF_ATOMS*sizeof(uint32_t);
@@ -257,7 +257,7 @@ void setup_gpu_for_docking(GpuData& cData, GpuTempData& tData)
 void finish_gpu_from_docking(GpuData& cData, GpuTempData& tData)
 {
     hipError_t status;
-    // Release all CUDA objects
+    // Release all HIP objects
 	// Constant objects
     status = hipFree(cData.pKerconst_interintra);
     RTERROR(status, "hipFree: error freeing cData.pKerconst_interintra\n");    
@@ -405,7 +405,7 @@ filled with clock() */
 
 	//preparing the constant data fields for the GPU
 	// ----------------------------------------------------------------------
-	// The original function does CUDA calls initializing const Kernel data.
+	// The original function does HIP calls initializing const Kernel data.
 	// We create a struct to hold those constants
 	// and return them <here> (<here> = where prepare_const_fields_for_gpu() is called),
 	// so we can send them to Kernels from <here>, instead of from calcenergy.cpp as originally.
@@ -507,9 +507,17 @@ filled with clock() */
     cData.pMem_gpu_evals_of_runs = tData.pMem_gpu_evals_of_runs;
     cData.pMem_prng_states = tData.pMem_prng_states;
     
-    // Set CUDA constants
-    cData.warpmask = 31;
-    cData.warpbits = 5;
+    // Set HIP constants
+    //--------------------------------
+    /* const needed for warp-level programming - Experimental */
+    hipDeviceProp_t props;
+    hipGetDeviceProperties(&props, 0); 
+    unsigned int w = props.warpSize;
+    cData.warpsize = w;	
+    cData.warpmask = w-1;  
+    cData.warpbits = (w==64) ? 6 : 5;  // 5 if 32 and 6 if 64  - 2^5, 2^6
+    printf("\n warp size , warp mask and warp bits are %d %d %d \n", cData.warpsize, cData.warpmask, cData.warpbits);		
+    //---------------------------------
 
     // Upload data
     //if(!floatgrids_preloaded){

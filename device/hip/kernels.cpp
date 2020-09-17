@@ -65,7 +65,7 @@ __device__ inline int64_t ullitolli(uint64_t u)
     WARPMINIMUMEXCHANGE(tgx, v0, k0, 16)   
 
 #define REDUCEINTEGERSUM(value, pAccumulator) \
-    if (threadIdx.x == 0) \
+    if (hipThreadIdx_x == 0) \
     { \
         *pAccumulator = 0; \
     } \
@@ -73,7 +73,7 @@ __device__ inline int64_t ullitolli(uint64_t u)
     __syncthreads(); \
     if (__any(0xffffffff)) \
     { \
-        uint32_t tgx            = threadIdx.x & cData.warpmask; \
+        uint32_t tgx            = hipThreadIdx_x & cData.warpmask; \
         value                  += __shfl(0xffffffff, value, tgx ^ 1); \
         value                  += __shfl(0xffffffff, value, tgx ^ 2); \
         value                  += __shfl(0xffffffff, value, tgx ^ 4); \
@@ -95,14 +95,14 @@ __device__ inline int64_t ullitolli(uint64_t u)
 #ifdef REPRO
 // This reduction implementation is slower, but ensures the sum is in a specific order to maintain bitwise reproducibility
 #define REDUCEFLOATSUM(value, pAccumulator) \
-    if (threadIdx.x == 0) \
+    if (hipThreadIdx_x == 0) \
     { \
         *pAccumulator = 0; \
     } \
-    for (int i_red=0; i_red<blockDim.x; i_red++){ \
+    for (int i_red=0; i_red< hipBlockDim_x; i_red++){ \
         __threadfence(); \
         __syncthreads(); \
-        if (i_red == threadIdx.x) *pAccumulator += value; \
+        if (i_red == hipThreadIdx_x) *pAccumulator += value; \
     } \
     __threadfence(); \
     __syncthreads(); \
@@ -111,7 +111,7 @@ __device__ inline int64_t ullitolli(uint64_t u)
 #else
 // This reduction implementation is faster
 #define REDUCEFLOATSUM(value, pAccumulator) \
-    if (threadIdx.x == 0) \
+    if (hipThreadIdx_x == 0) \
     { \
         *pAccumulator = 0; \
     } \
@@ -119,7 +119,7 @@ __device__ inline int64_t ullitolli(uint64_t u)
     __syncthreads(); \
     if (__any(0xffffffff)) \
     { \
-        uint32_t tgx            = threadIdx.x & cData.warpmask; \
+        uint32_t tgx            = hipThreadIdx_x & cData.warpmask; \
         value                  += __shfl(0xffffffff, value, tgx ^ 1); \
         value                  += __shfl(0xffffffff, value, tgx ^ 2); \
         value                  += __shfl(0xffffffff, value, tgx ^ 4); \
