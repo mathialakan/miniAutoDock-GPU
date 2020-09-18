@@ -212,6 +212,7 @@ void get_commandpars(const int* argc,
 	mypars->rmsd_tolerance 		= 2.0;			//2 Angstroem
 	strcpy(mypars->xrayligandfile, mypars->ligandfile);	// By default xray-ligand file is the same as the randomized input ligand
 	mypars->given_xrayligandfile	= false;		// That is, not given (explicitly by the user)
+	mypars->num_of_docks = 1;                             // repeat the docking proess num_of_docks times
 	// ------------------------------------------
 
 	//overwriting values which were defined as a command line argument
@@ -248,6 +249,15 @@ void get_commandpars(const int* argc,
 			else
 				printf("Warning: value of -nrun argument ignored. Value must be an integer between 1 and %d.\n", MAX_NUM_OF_RUNS);
 		}
+                 if (strcmp("-ndock", argv [i]) == 0){
+                        arg_recognized = 1;
+                        sscanf(argv [i+1], "%ld", &tempint);
+
+                        if ((tempint >= 1) && (tempint <= MAX_NUM_OF_DOCKS))
+                                mypars->num_of_docks = (int) tempint;
+                        else
+                                printf("Warning: value of -ndock argument ignored. Value must be an integer between 1 and %d.\n", MAX_NUM_OF_DOCKS);
+                }
 
 		if (arg_recognized != 1)
 			printf("Warning: unknown argument '%s'.\n", argv [i]);

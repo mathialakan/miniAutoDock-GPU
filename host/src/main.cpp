@@ -78,19 +78,28 @@ int main(int argc, char* argv[])
 	Kokkos::initialize();
  	{
 #endif
+	// Print version info
+	printf("AutoDock-GPU version: %s\n", VERSION);
+	// Error flag
+	int err = 0;
 	// Timer initializations
 #ifndef _WIN32
-	timeval time_start, idle_timer;
+	timeval time_start;
 	start_timer(time_start);
-	start_timer(idle_timer);
 #else
 	// Dummy variables if timers off
-	double time_start, idle_timer;
+	double time_start = 0;
 #endif
-	double total_setup_time=0;
+	double setup_time=0;
 	double total_exec_time=0;
-//	double idle_time;
+	double resulting_time=0;
+#ifndef _WIN32
+                timeval setup_timer, exec_timer,  resulting_timer;
+#else
+                double setup_timer, exec_timer, resulting_timer;
+#endif
 
+	start_timer(setup_timer);
 	// Setup master map set (one for now, nthreads-1 for general case)
 	std::vector<Map> all_maps;
 
@@ -98,8 +107,6 @@ int main(int argc, char* argv[])
 #ifdef USE_KOKKOS
 	Kokkos::View<float*,HostType> floatgrids = Kokkos::View<float*,HostType>("floatgrids0", 0);
 #else
-
-	double total_processing_time=0;
 	std::vector<float> floatgrids;
 	GpuData cData;
 	GpuTempData tData;
@@ -122,11 +129,6 @@ int main(int argc, char* argv[])
 
 	setup_gpu_for_docking(cData,tData);
 #endif
-	// Error flag
-	int err = 0;
-
-	// Print version info
-	printf("AutoDock-GPU version: %s\n", VERSION);
 
 		//int t_id = 0;
 		Dockpars   mypars;
@@ -134,13 +136,7 @@ int main(int argc, char* argv[])
 		Gridinfo   mygrid;
 		Liganddata myxrayligand;
 	        SimulationState sim_state;
-#ifndef _WIN32
-	        timeval setup_timer, exec_timer,  processing_timer;
-#else
-		double setup_timer, exec_timer, processing_timer;
-#endif
 		int i_job = 0;
-			start_timer(setup_timer);
 			// Load files, read inputs, prepare arrays for docking stage
 #ifdef USE_KOKKOS
 			if (setup(mygrid, floatgrids, mypars, myligand_init, myxrayligand, i_job,  argc, argv) != 0)
@@ -154,10 +150,12 @@ int main(int argc, char* argv[])
 				err = 1;
 			} else { // Successful setup
 				// Copy preloaded maps to GPU
-				total_setup_time+=seconds_since(setup_timer);
+				setup_time=seconds_since(setup_timer);
 			}
 
 			// Starting Docking
+	        unsigned int repeats = mypars.num_of_docks;
+		for (unsigned int i = 0; i < repeats; ++i){
 			int error_in_docking;
 			// Critical section to only let one thread access GPU at a time
 			{
@@ -182,21 +180,26 @@ int main(int argc, char* argv[])
 			} else { // Successful run
 #ifndef _WIN32
 				total_exec_time+=sim_state.exec_time;
-				printf("\nThe Job took %.3f sec for setup\n", sim_state.exec_time);
+				printf("\nThe Job took %.3f sec for docking\n", sim_state.exec_time);
 #endif
 			}
+		} // End all dockings
 #ifndef USE_KOKKOS
 			// Post-processing
-	                start_timer(processing_timer);
+	                start_timer(resulting_timer);
 	                process_result(&(mygrid), floatgrids.data(), &(mypars), &(myligand_init), &(myxrayligand), &argc,argv, sim_state);
-	                total_processing_time+=seconds_since(processing_timer);
+	                resulting_time=seconds_since(resulting_timer);
 
 	finish_gpu_from_docking(cData,tData);
 #endif
 
 #ifndef _WIN32
 	// Total time measurement
-	printf("\nRun time of the job: %.3f sec", seconds_since(time_start));
+	printf("\nSetup time: %.3f sec", setup_time);
+	printf("\nReulting time: %.3f sec", resulting_time);
+	printf("\nTotal Docking time: %.3f sec", total_exec_time);
+	printf("\nTotal Run time: %.3f sec", seconds_since(time_start));
+	printf("\nMean Docking time: %.3f sec", total_exec_time/repeats);
 #endif
 
 	// Alert user to ligands that failed to complete

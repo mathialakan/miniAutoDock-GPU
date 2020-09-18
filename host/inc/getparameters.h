@@ -91,9 +91,7 @@ typedef struct
 		char  resname [128];
 		float qasp;
 		float rmsd_tolerance;
-//		float adam_beta1;
-//		float adam_beta2;
-//		float adam_epsilon;
+	 unsigned int num_of_docks;
 } Dockpars;
 
 
