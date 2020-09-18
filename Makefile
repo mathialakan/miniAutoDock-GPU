@@ -44,9 +44,24 @@ ifeq ($(API),HIP)
   endif
 else
 ifeq ($(API), KOKKOS)
-  override DEVICE:=GPU
-  export
+  ifeq ($(DEVICE), SERIAL)
+    override DEVICE:=SERIAL
+    export
+  else
+    override DEVICE:=GPU
+    export
+    ifeq ($(CARD), NVIDIA)
+      override CARD:=NVIDIA
+      export
+    else
+    ifeq ($(CARD), AMD)
+      override CARD:=AMD
+      export
+    endif
+    endif
+  endif
   include Makefile.Kokkos
 endif
 endif
 endif
+

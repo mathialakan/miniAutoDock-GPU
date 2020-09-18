@@ -8,15 +8,20 @@
 
 UNAME := $(shell uname)
 
-export NVCC_WRAPPER_DEFAULT_COMPILER=mpiCC
 KOKKOS_SRC_DIR ?=/usr/local/kokkos
 KOKKOS_INC_PATH ?=/usr/local/kokkos/install/include/
 KOKKOS_LIB_PATH ?=/usr/local/kokkos/install/lib/
-LIB_KOKKOS=-lkokkos #core
+LIB_KOKKOS=-lkokkoscore -ldl
 
 $(shell ./link_kokkos.sh)
 
+ifeq ($(CARD), AMD)
+CPP = $(HIP_PATH)/bin/hipcc -std=c++14
+else
+export NVCC_WRAPPER_DEFAULT_COMPILER=mpiCC
 CPP = $(KOKKOS_SRC_DIR)/bin/nvcc_wrapper -mp -std=c++11 --expt-extended-lambda -arch=sm_70
+endif
+
 # ------------------------------------------------------
 # Project directories
 COMMON_DIR=./common
