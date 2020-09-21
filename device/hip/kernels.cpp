@@ -50,8 +50,8 @@ __device__ inline int64_t ullitolli(uint64_t u)
         float v1    = v0; \
         int k1      = k0; \
         int otgx    = tgx ^ mask; \
-        float v2    = __shfl(0xffffffff, v0, otgx); \
-        int k2      = __shfl(0xffffffff, k0, otgx); \
+        float v2    = __shfl( v0, otgx); \
+        int k2      = __shfl( k0, otgx); \
         int flag    = ((v1 < v2) ^ (tgx > otgx)) && (v1 != v2); \
         k0          = flag ? k1 : k2; \
         v0          = flag ? v1 : v2; \
@@ -62,7 +62,8 @@ __device__ inline int64_t ullitolli(uint64_t u)
     WARPMINIMUMEXCHANGE(tgx, v0, k0, 2) \
     WARPMINIMUMEXCHANGE(tgx, v0, k0, 4) \
     WARPMINIMUMEXCHANGE(tgx, v0, k0, 8) \
-    WARPMINIMUMEXCHANGE(tgx, v0, k0, 16)   
+    WARPMINIMUMEXCHANGE(tgx, v0, k0, 16) \
+    WARPMINIMUMEXCHANGE(tgx, v0, k0, 32)   
 
 #define REDUCEINTEGERSUM(value, pAccumulator) \
     if (hipThreadIdx_x == 0) \
@@ -71,14 +72,15 @@ __device__ inline int64_t ullitolli(uint64_t u)
     } \
     __threadfence(); \
     __syncthreads(); \
-    if (__any(0xffffffff)) \
+    if (__any(value != 0)) \
     { \
         uint32_t tgx            = hipThreadIdx_x & cData.warpmask; \
-        value                  += __shfl(0xffffffff, value, tgx ^ 1); \
-        value                  += __shfl(0xffffffff, value, tgx ^ 2); \
-        value                  += __shfl(0xffffffff, value, tgx ^ 4); \
-        value                  += __shfl(0xffffffff, value, tgx ^ 8); \
-        value                  += __shfl(0xffffffff, value, tgx ^ 16); \
+        value                  += __shfl( value, tgx ^ 1); \
+        value                  += __shfl( value, tgx ^ 2); \
+        value                  += __shfl( value, tgx ^ 4); \
+        value                  += __shfl( value, tgx ^ 8); \
+        value                  += __shfl( value, tgx ^ 16); \
+        value                  += __shfl( value, tgx ^ 32); \
         if (tgx == 0) \
         { \
             atomicAdd(pAccumulator, value); \
@@ -117,14 +119,15 @@ __device__ inline int64_t ullitolli(uint64_t u)
     } \
     __threadfence(); \
     __syncthreads(); \
-    if (__any(0xffffffff)) \
+    if (__any(value != 0.0f)) \
     { \
         uint32_t tgx            = hipThreadIdx_x & cData.warpmask; \
-        value                  += __shfl(0xffffffff, value, tgx ^ 1); \
-        value                  += __shfl(0xffffffff, value, tgx ^ 2); \
-        value                  += __shfl(0xffffffff, value, tgx ^ 4); \
-        value                  += __shfl(0xffffffff, value, tgx ^ 8); \
-        value                  += __shfl(0xffffffff, value, tgx ^ 16); \
+        value                  += __shfl( value, tgx ^ 1); \
+        value                  += __shfl( value, tgx ^ 2); \
+        value                  += __shfl( value, tgx ^ 4); \
+        value                  += __shfl( value, tgx ^ 8); \
+        value                  += __shfl( value, tgx ^ 16); \
+        value                  += __shfl( value, tgx ^ 32); \
         if (tgx == 0) \
         { \
             atomicAdd(pAccumulator, value); \

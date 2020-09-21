@@ -45,15 +45,14 @@ gpu_gen_and_eval_newpops_kernel(
 	__shared__ int parents[2];
 	__shared__ int covr_point[2];
 	__shared__ float randnums[10];
-    __shared__ float sBestEnergy[32];
-    __shared__ int sBestID[32];
+    __shared__ float sBestEnergy[64];   	 //array of warpSize  cData.warpsize
+    __shared__ int sBestID[64];   		 //array of warpSize
 	__shared__ float3 calc_coords[MAX_NUM_OF_ATOMS];
     __shared__ float sFloatAccumulator;
 	int run_id;    
 	int temp_covr_point;
 	float energy;
     int bestID; 
-
 	// In this case this compute-unit is responsible for elitist selection
 	if ((hipBlockIdx_x % cData.dockpars.pop_size) == 0) {
         // Find and copy best member of population to position 0
@@ -94,7 +93,7 @@ gpu_gen_and_eval_newpops_kernel(
         // Perform final reduction in warp 0
         if (warpID == 0)
         {
-            int blocks = hipBlockDim_x / 32;   //hipWarpSize may work, warp size = 64 on AMD GCN /* cudaDeviceProp props; cudaGetDeviceProperties(&props, deviceID); int w = props.warpSize;*/
+            int blocks = hipBlockDim_x / cData.warpsize;   //hipWarpSize may work, warp size = 64 on AMD GCN /* cudaDeviceProp props; cudaGetDeviceProperties(&props, deviceID); int w = props.warpSize;*/
             if (tgx < blocks)
             {
                 bestID = sBestID[tgx];
