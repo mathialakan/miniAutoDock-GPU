@@ -189,7 +189,7 @@ parameters argc and argv:
 	while ((progress = check_progress(evals_of_runs_h.data(), generation_cnt, mypars->num_of_energy_evals, mypars->num_of_generations, mypars->num_of_runs, total_evals)) < 100.0)
 	{
 		if (mypars->autostop) {
-			if (generation_cnt % 10 == 0) {
+			if (generation_cnt % mypars->as_frequency == 0) {
 				Kokkos::deep_copy(energies_h,odd_generation.energies);
 				if (autostop.check_if_satisfactory(generation_cnt, energies_h.data(), total_evals))
 					break; // Exit loop

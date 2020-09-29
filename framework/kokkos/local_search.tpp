@@ -84,7 +84,7 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 			// New random deviate
 			float good_dir = 1.0f;
 			for (int gene_cnt = tidx; gene_cnt < docking_params.num_of_genes; gene_cnt+= team_size) {
-				genotype_deviate[gene_cnt] = rho(0)*(2*rand_float(team_member, docking_params)-1);
+				genotype_deviate[gene_cnt] = rho(0)*(2*rand_float(team_member, docking_params)-1)*(rand_float(team_member, docking_params)<0.09f);
 
 				if (gene_cnt < 3) { // Translation genes
 					genotype_deviate[gene_cnt] *= docking_params.base_dmov_mul_sqrt3;
