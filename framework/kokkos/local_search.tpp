@@ -84,7 +84,7 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 			// New random deviate
 			float good_dir = 1.0f;
 			for (int gene_cnt = tidx; gene_cnt < docking_params.num_of_genes; gene_cnt+= team_size) {
-				genotype_deviate[gene_cnt] = rho(0)*(2*rand_float(team_member, docking_params)-1)*(rand_float(team_member, docking_params)<0.09f);
+				genotype_deviate[gene_cnt] = rho(0)*(2*rand_float(team_member, docking_params)-1)*(rand_float(team_member, docking_params)<0.12f);
 
 				if (gene_cnt < 3) { // Translation genes
 					genotype_deviate[gene_cnt] *= docking_params.base_dmov_mul_sqrt3;
@@ -148,7 +148,7 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
                                 cons_fail++;
 			}
 
-			team_member.team_barrier();
+	//		team_member.team_barrier();
 
 			// Iteration controls
 			if (tidx == 0) {
@@ -178,7 +178,7 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
                         while (best_genotype[gene_cnt] < 0.0f   ) { best_genotype[gene_cnt] += 360.0f; }
 		}
 
-		team_member.team_barrier();
+	//	team_member.team_barrier();
 
                 // Copy to global views
                 if( tidx == 0 ) {

@@ -24,7 +24,7 @@ void calc_init_pop(Generation<Device>& current, Dockpars* mypars,DockingParams<D
 		Genotype genotype(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
 		copy_genotype(team_member, docking_params.num_of_genes, genotype, current, lidx);
 
-		team_member.team_barrier();
+//		team_member.team_barrier();
 
 		// Have to declare this outside calc_energy since Solis-Wets has energy calc in a loop
 		Coordinates calc_coords(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_atoms);
