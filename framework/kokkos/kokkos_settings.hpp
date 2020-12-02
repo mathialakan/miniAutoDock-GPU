@@ -27,9 +27,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 // Declare the memory and execution spaces.
 #ifdef USE_GPU
-using MemSpace_UVM = Kokkos::CudaUVMSpace;
-using MemSpace = Kokkos::CudaSpace;
-using ExSpace = Kokkos::Cuda;
+#ifdef CARD_AMD
+ using MemSpace = Kokkos::Experimental::HIPSpace;
+ using ExSpace = Kokkos::Experimental::HIP;
+#else
+ using MemSpace = Kokkos::CudaSpace;
+ using MemSpace_UVM = Kokkos::CudaUVMSpace;
+ using ExSpace = Kokkos::Cuda;
+ using DeviceType_UVM = Kokkos::Device<ExSpace,MemSpace_UVM>;
+#endif
 #else
 #ifdef USE_OMP
 using MemSpace = Kokkos::HostSpace;
@@ -40,7 +46,6 @@ using ExSpace = Kokkos::Serial;
 #endif
 #endif
 using DeviceType = Kokkos::Device<ExSpace,MemSpace>;
-using DeviceType_UVM = Kokkos::Device<ExSpace,MemSpace_UVM>;
 
 
 // Designate a CPU-specific Memory and Execution space
