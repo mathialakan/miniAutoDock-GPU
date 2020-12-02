@@ -20,6 +20,22 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
                 int lidx = team_member.league_rank();
 		int team_size = team_member.team_size();
 		int run_id = lidx / docking_params.num_of_lsentities;
+		float energy;
+		float best_energy;
+
+                Genotype genotype(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
+		Genotype best_genotype(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
+		GenotypeAux genotype_bias(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
+                GenotypeAux genotype_deviate(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
+		Coordinates calc_coords(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_atoms);
+
+	        OneBool stay_in_loop(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT));
+                OneBool energy_improved(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT));
+                unsigned int iteration_cnt ;
+                int evaluation_cnt ;
+                OneFloat rho(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT));
+		int   cons_succ;
+                int   cons_fail;
 
 		// Locally shared: global index in population
 		OneInt gpop_idx(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT));
@@ -39,59 +55,51 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 			}
 
 			gpop_idx(0) = run_id*docking_params.pop_size+entity_id; // global population index
+
+		// Copy genotype to local shared memory
+			copy_genotype(team_member, docking_params.num_of_genes, genotype, next, gpop_idx(0));
+
+
+		// Initializing best genotype and energy
+			energy = next.energies(gpop_idx(0)); // Dont need to init this since it's overwritten
+			best_energy = energy;
+ 		// Initialize iteration controls
+                	stay_in_loop(0)=true;
+                	energy_improved(0)=false;
+                	iteration_cnt = 0;
+                	evaluation_cnt = 0;
+                	rho(0)  = 1.0f;
+                	cons_succ = 0;
+                	cons_fail = 0;
+
 		}
 
 		team_member.team_barrier();
 
-		// Copy genotype to local shared memory
-                Genotype genotype(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
-		copy_genotype(team_member, docking_params.num_of_genes, genotype, next, gpop_idx(0));
-
-		team_member.team_barrier();
-
-		// Initializing best genotype and energy
-		float energy = next.energies(gpop_idx(0)); // Dont need to init this since it's overwritten
-		float best_energy = energy;
-		Genotype best_genotype(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
                 copy_genotype(team_member, docking_params.num_of_genes, best_genotype, genotype);
-
+		
 		// Initializing variable arrays for solis-wets algorithm
-		GenotypeAux genotype_bias(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
-		GenotypeAux genotype_deviate(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
 		for(int i = tidx; i < docking_params.num_of_genes; i+= team_size) {
                         genotype_bias[i]=0; // Probably unnecessary since kokkos views are automatically initialized to 0 (not sure if that's the case in scratch though)
                 }
-
-
-		// Initialize iteration controls
-		OneBool stay_in_loop(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT));
-		stay_in_loop(0)=true;
-		OneBool energy_improved(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT));
-		energy_improved(0)=false;
-		unsigned int iteration_cnt = 0;
-		int evaluation_cnt = 0;
-		OneFloat rho(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT));
-		rho(0)  = 1.0f;
-		int   cons_succ = 0;
-		int   cons_fail = 0;
 
 		team_member.team_barrier();
 
 		// Declare/allocate coordinates for internal use by calc_energy only. Must be outside of loop since there is
 		// no way to de/reallocate things in Kokkos team scratch
-		Coordinates calc_coords(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_atoms);
 		while (stay_in_loop(0)){
 			// New random deviate
 			float good_dir = 1.0f;
 			for (int gene_cnt = tidx; gene_cnt < docking_params.num_of_genes; gene_cnt+= team_size) {
-				genotype_deviate[gene_cnt] = rho(0)*(2*rand_float(team_member, docking_params)-1)*(rand_float(team_member, docking_params)<0.12f);
+				genotype_deviate[gene_cnt] = rho(0)*(2*rand_float(team_member, docking_params)-1)*(rand_float(team_member, docking_params)<0.3f);
 
 				if (gene_cnt < 3) { // Translation genes
 					genotype_deviate[gene_cnt] *= docking_params.base_dmov_mul_sqrt3;
 				} else { // Orientation and torsion genes
 					genotype_deviate[gene_cnt] *= docking_params.base_dang_mul_sqrt3;
 				}
-
+		//	}
+		//	for (int gene_cnt = tidx; gene_cnt < docking_params.num_of_genes; gene_cnt+= team_size) {
 				// Generating new genotype candidate
 				genotype[gene_cnt] = best_genotype[gene_cnt] +
 							(genotype_deviate[gene_cnt] + genotype_bias[gene_cnt]);
@@ -101,7 +109,7 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 
 			// Calculating energy of candidate, increment #evals, check if energy improved
 			energy = calc_energy(team_member, docking_params, consts, calc_coords, genotype, run_id);
-			evaluation_cnt++;
+			if (tidx == 0) evaluation_cnt++;
 			if ((tidx == 0) && (energy < best_energy)) energy_improved(0)=true;
 
 			team_member.team_barrier();
@@ -118,7 +126,7 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 
 				// Calculating energy of candidate, increment #evals, check if energy improved
 				energy = calc_energy(team_member, docking_params, consts, calc_coords, genotype, run_id);
-				evaluation_cnt++;
+				if (tidx == 0) evaluation_cnt++;
 				if ((tidx == 0) && (energy < best_energy)) energy_improved(0)=true;
 
 				team_member.team_barrier();
@@ -132,23 +140,25 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 					// Updating genotype_bias
 					genotype_bias[gene_cnt] = 0.6f*genotype_bias[gene_cnt] + good_dir*0.4f*genotype_deviate[gene_cnt];
 				}
-				best_energy = energy;
+				//best_energy = energy;
 
 				team_member.team_barrier();
-
+				if (tidx == 0) {
+				best_energy = energy;
 				cons_succ++;
 				cons_fail = 0;
 				energy_improved(0)=false;
+			}
 			} else { // Failure in both directions
 				for (int gene_cnt = tidx; gene_cnt < docking_params.num_of_genes; gene_cnt+= team_size) {
 					// Reducing genotype_bias
 					genotype_bias[gene_cnt] *= 0.5f;
 				}
+				if (tidx == 0) {
 				cons_succ = 0;
                                 cons_fail++;
+				}
 			}
-
-	//		team_member.team_barrier();
 
 			// Iteration controls
 			if (tidx == 0) {
@@ -173,12 +183,12 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 		// -----------------------------------------------------------------------------
 
 		// Modulo torsion angles
-		for (int gene_cnt = tidx+3; gene_cnt < docking_params.num_of_genes; gene_cnt+= team_size) {
-                        while (best_genotype[gene_cnt] >= 360.0f) { best_genotype[gene_cnt] -= 360.0f; }
-                        while (best_genotype[gene_cnt] < 0.0f   ) { best_genotype[gene_cnt] += 360.0f; }
+		for (int gene_cnt = tidx; gene_cnt < docking_params.num_of_genes; gene_cnt+= team_size) {
+                        if (gene_cnt >=3){
+			 while (best_genotype[gene_cnt] >= 360.0f) { best_genotype[gene_cnt] -= 360.0f; }
+                         while (best_genotype[gene_cnt] < 0.0f   ) { best_genotype[gene_cnt] += 360.0f; }
+			}
 		}
-
-	//	team_member.team_barrier();
 
                 // Copy to global views
                 if( tidx == 0 ) {
@@ -188,6 +198,5 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 
 		copy_genotype(team_member, docking_params.num_of_genes, next, gpop_idx(0), best_genotype);
 
-                team_member.team_barrier();
         });
 }
