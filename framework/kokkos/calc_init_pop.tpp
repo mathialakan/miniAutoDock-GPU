@@ -21,13 +21,14 @@ void calc_init_pop(Generation<Device>& current, Dockpars* mypars,DockingParams<D
 		// Determine which run this team is doing - note this is a floor since integer division
 		int run_id = lidx/docking_params.pop_size;
 
-		Genotype genotype(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
-		copy_genotype(team_member, docking_params.num_of_genes, genotype, current, lidx);
-
-//		team_member.team_barrier();
-
 		// Have to declare this outside calc_energy since Solis-Wets has energy calc in a loop
 		Coordinates calc_coords(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_atoms);
+		
+		Genotype genotype(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT),docking_params.num_of_genes);
+		copy_genotype(team_member, docking_params.num_of_genes, genotype, current, lidx);
+	//	deep_copy(current.conformations, genotype);
+
+		team_member.team_barrier();
 
 		// Get the current energy for each run
 		float energy = calc_energy(team_member, docking_params, consts, calc_coords, genotype, run_id);

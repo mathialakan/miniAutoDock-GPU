@@ -18,7 +18,7 @@ void sum_evals(Dockpars* mypars,DockingParams<Device>& docking_params,Kokkos::Vi
                         l_evals += docking_params.evals_of_new_entities(lidx*docking_params.pop_size + idx);
                 }, sum_evals);
 
-                team_member.team_barrier();
+               // team_member.team_barrier();
 
                 // Add to global view
                 if( tidx == 0 ) {
