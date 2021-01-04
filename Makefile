@@ -1,5 +1,5 @@
-# AutoDock-GPU Makefile
-
+#
+# miniAD Makefile
 # ------------------------------------------------------
 # Note that environment variables must be defined
 # before compiling

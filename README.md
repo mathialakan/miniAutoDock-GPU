@@ -31,7 +31,7 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 | Binary-name portion | Description            | Values                                            |
 |:-------------------:|:----------------------:|:-------------------------------------------------:|
 | **&lt;type&gt;**    | Accelerator chosen     | `gpu`                                      |
-| **&lt;N&gt;**       | OpenCL work-group size | `1`, `2`, `4`, `8`,`16`, `32`, `64`, `128`, `256` |
+| **&lt;N&gt;**       | work-group size | `1`, `2`, `4`, `8`,`16`, `32`, `64`, `128`, `256` |
 
 
 
