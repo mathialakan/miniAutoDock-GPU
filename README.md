@@ -45,6 +45,7 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
   export GPU_INCLUDE_PATH=/sw/summit/cuda/10.1.243/include 
   make API=CUDA 
   ```
+ #
 ```diff 
 + HIP version 
 ```
@@ -61,13 +62,13 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
   export GPU_INCLUDE_PATH=/opt/rocm-${ROCMV}/include 
   make API=HIP CARD=AMD 
   ```
+#
 ```diff 
 + Kokkos version 
 ```
-  Prerequisites: built kokkos, rocm, cuda, and gcc <br/>
-  Build: define the environment varables KOKKOS_SRC_DIR, KOKKOS_LIB_PATH and KOKKOS_INC_PATH 
-         make API=KOKKOS DEVICE=GPU  CARD=AMD <br/>
-  Example: build kokkos with HIP backend version on CoE <br/>
+  * Prerequisites: built kokkos, rocm, cuda, and gcc <br/>
+  * Build: define the environment varables KOKKOS_SRC_DIR, KOKKOS_LIB_PATH and KOKKOS_INC_PATH before build it <br/>
+  * Example: build kokkos with HIP backend version on CoE <br/>
   ```zsh
   ROCMV=3.7.0 
   module load rocm/${ROCMV} cuda10.2/toolkit 
@@ -76,7 +77,7 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
   export KOKKOS_LIB_PATH=/home/users/coe0179/kokkos/lib64/ 
   make API=KOKKOS DEVICE=GPU  CARD=AMD
   ```
-
+#
 ## Basic command 
 
 ```zsh 
