@@ -23,11 +23,12 @@ make DEVICE=<TYPE> API=<SUPPORT> CARD=<VENDOR> NUMWI=<NWI>
 | `<NWI>`    | work-group size | `1`, `2`, `4`, `8`, `16`, `32`, `64`, `128`, `256` |
 
 
-After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;wi** is placed under [bin](./bin).
+After successful compilation, the host binary **autodock_&lt;api&gt;_&lt;card&gt;_&lt;N&gt;wi** is placed under [bin](./bin).
 
 | Binary-name portion | Description            | Values                                            |
 |:-------------------:|:----------------------:|:-------------------------------------------------:|
-| **&lt;type&gt;**    | Accelerator chosen     | `gpu`                                      |
+| **&lt;api&gt;**    | Accelerator chosen     | `cuda` , `hip`, `kokkos`                                     |
+| **&lt;card&gt;**    | Accelerator chosen     | `nv`, `amd`                                   |
 | **&lt;N&gt;**       | work-group size | `1`, `2`, `4`, `8`,`16`, `32`, `64`, `128`, `256` |
 
 
@@ -35,10 +36,9 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 ```diff 
 + CUDA version 
 ```
-  Prerequisites: cuda and gcc <br/>
-  Build: define the environment varables GPU_LIBRARY_PATH and GPU_INCLUDE_PATH 
-         make API=CUDA <br/>
-  Example: build on summit 
+  * Prerequisites: cuda 8.0 or above and at least gcc 5.3 (choose based on cuda version)
+  * Build: define the environment varables GPU_LIBRARY_PATH and GPU_INCLUDE_PATH before build it
+  * Example: build on summit 
   ```zsh
   module load cuda 
   export GPU_LIBRARY_PATH=/sw/summit/cuda/10.1.243/lib64 
@@ -49,14 +49,13 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 ```diff 
 + HIP version 
 ```
-  Prerequisites: rocm, cuda, and gcc <br/>
-  Build: define the environment varables HIP_PLATFORM, GPU_LIBRARY_PATH and GPU_INCLUDE_PATH 
-         make API=HIP CARD=AMD <br/>
-  Example: build on CoE  <br/>
+  * Prerequisites: rocm 3.7 or above and at least gcc 7.2 (choose based on rocm version)
+  * Build: define the environment varables HIP_PLATFORM, GPU_LIBRARY_PATH and GPU_INCLUDE_PATH before build it
+  * Example: build on CoE  
   ```zsh
   ROCMV=3.7.0 
   PLATFORM=hcc 
-  module load rocm/${ROCMV} cuda10.2/toolkit 
+  module load rocm/${ROCMV}  
   export HIP_PLATFORM=${PLATFORM} 
   export GPU_LIBRARY_PATH=/opt/rocm-${ROCMV}/lib 
   export GPU_INCLUDE_PATH=/opt/rocm-${ROCMV}/include 
@@ -66,9 +65,9 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 ```diff 
 + Kokkos version 
 ```
-  * Prerequisites: built kokkos, rocm, cuda, and gcc <br/>
-  * Build: define the environment varables KOKKOS_SRC_DIR, KOKKOS_LIB_PATH and KOKKOS_INC_PATH before build it <br/>
-  * Example: build kokkos with HIP backend version on CoE <br/>
+  * Prerequisites: built kokkos with the specific backend, rocm 3.7 or above, cuda 8.0 or above, and gcc 6.1 or above
+  * Build: define the environment varables KOKKOS_SRC_DIR, KOKKOS_LIB_PATH and KOKKOS_INC_PATH before build it 
+  * Example: build kokkos with HIP backend version on CoE 
   ```zsh
   ROCMV=3.7.0 
   module load rocm/${ROCMV} cuda10.2/toolkit 
@@ -81,7 +80,7 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 ## Basic command 
 
 ```zsh 
-./bin/autodock_<type>_<N>wi \ 
+./bin/autodock_<api>_<card>_<N>wi \ 
 -lfile <ligand>.pdbqt \ 
 -nrun <nruns> 
 ``` 
@@ -94,7 +93,7 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 ## Example 
 
 ```zsh 
-./bin/autodock_gpu_64wi \ 
+./bin/autodock_hip_nv_64wi \ 
 -lfile ./input/7cpa/7cpa_ligand.pdbqt  \ 
 -nrun 10 
 ``` 
