@@ -32,7 +32,9 @@ After successful compilation, the host binary **autodock_&lt;type&gt;_&lt;N&gt;w
 
 
 # Build
-```diff + CUDA version ```
+```diff 
++ CUDA version 
+```
   Prerequisites: cuda and gcc <br/>
   Build: define the environment varables GPU_LIBRARY_PATH and GPU_INCLUDE_PATH 
          make API=CUDA <br/>
