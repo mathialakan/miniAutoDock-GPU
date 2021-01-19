@@ -1,6 +1,6 @@
 # miniAutoDock-GPU 
 
- A miniapp based on AutoDock-GPU https://github.com/ccsb-scripps/AutoDock-GPU 
+ A miniapp based on [AutoDock-GPU](https://github.com/ccsb-scripps/AutoDock-GPU) 
 
 This app mainly focuses the performance portability and targets NVIDIA and AMD GPUs 
 
@@ -49,7 +49,7 @@ After successful compilation, the host binary **autodock_&lt;api&gt;_&lt;card&gt
 ```diff 
 + HIP version 
 ```
-  * Prerequisites: rocm 3.7 or above and at least gcc 7.2 (choose based on rocm version)
+  * Prerequisites: [rocm](https://github.com/RadeonOpenCompute/ROCm) 3.7 or above and at least gcc 7.2 (choose based on rocm version)
   * Build: define the environment varables HIP_PLATFORM, GPU_LIBRARY_PATH and GPU_INCLUDE_PATH before build it
   * Example: build on CoE  
   ```zsh
@@ -65,7 +65,7 @@ After successful compilation, the host binary **autodock_&lt;api&gt;_&lt;card&gt
 ```diff 
 + Kokkos version 
 ```
-  * Prerequisites: built kokkos with the specific backend, rocm 3.7 or above, cuda 8.0 or above, and gcc 6.1 or above
+  * Prerequisites: built [kokkos](https://github.com/kokkos/kokkos) with the specific backend, [rocm](https://github.com/RadeonOpenCompute/ROCm) 3.7 or above, cuda 8.0 or above, and gcc 6.1 or above
   * Build: define the environment varables KOKKOS_SRC_DIR, KOKKOS_LIB_PATH and KOKKOS_INC_PATH before build it 
   * Example: build kokkos with HIP backend version on CoE 
   ```zsh
@@ -98,7 +98,7 @@ After successful compilation, the host binary **autodock_&lt;api&gt;_&lt;card&gt
 -nrun 10 
 ``` 
 ## References 
-MiniAD development, discussion, and benchmark have been published in 2020 IEEE/ACM International Workshop on P3HPC. Please cite these references if you use miniAD in your research:
+MiniAD development, discussion, and benchmark have been published in 2020 IEEE/ACM International Workshop on P3HPC. Please cite these references if you use miniAD in your research: <br/>
 <a id="1">[1]</a> M. Thavappiragasam, A. Scheinberg, W. Elwasif, O. Hernandez and A. Sedova, "Performance Portability of Molecular Docking Miniapp On Leadership Computing Platforms," 2020 IEEE/ACM International Workshop on Performance, Portability and Productivity in HPC (P3HPC), GA, USA, 2020, pp. 36-44, doi: 10.1109/P3HPC51967.2020.00009.
  
 
