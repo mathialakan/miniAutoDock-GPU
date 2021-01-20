@@ -1,6 +1,6 @@
 # miniAutoDock-GPU 
 
- A miniapp based on [AutoDock-GPU](https://github.com/ccsb-scripps/AutoDock-GPU). This app mainly focuses the performance portability and targets NVIDIA and AMD GPUs. 
+ A miniapp based on [AutoDock-GPU](https://github.com/ccsb-scripps/AutoDock-GPU). This app mainly focuses the performance portability and targets NVIDIA and AMD GPUs. The miniAD is available under GNU GPL version 2 and/or LGPL version 2.1 license
 
 # Programming Base (API/ Model) 
 
