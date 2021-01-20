@@ -1,6 +1,6 @@
 # miniAutoDock-GPU 
 
- A miniapp based on [AutoDock-GPU](https://github.com/ccsb-scripps/AutoDock-GPU). This app mainly focuses the performance portability and targets NVIDIA and AMD GPUs. The miniAD is available under GNU GPL version 2 and/or LGPL version 2.1 license
+ A miniapp based on [AutoDock-GPU](https://github.com/ccsb-scripps/AutoDock-GPU). This app mainly focuses the performance portability and targets NVIDIA and AMD GPUs. The miniAD is available under GNU GPL version 2 and/or LGPL version 2.1 licenses.
 
 # Programming Base (API/ Model) 
 
@@ -31,13 +31,13 @@ After successful compilation, the host binary **autodock_&lt;api&gt;_&lt;card&gt
 
 
 # Build
-Steps to build the CUDA, HIP, and Kokkos version of miniAD 
+Steps to build the CUDA, HIP, and Kokkos versions of miniAD, 
 ```diff 
 + CUDA version 
 ```
-  * Prerequisites: [cuda](https://developer.nvidia.com/cuda-toolkit) 8.0 or above and at least [gcc](https://gcc.gnu.org/) 5.3 (choose based on cuda version)
-  * Build: define the environment varables GPU_LIBRARY_PATH and GPU_INCLUDE_PATH before build it
-  * Example: build on summit 
+  * Prerequisites: [cuda](https://developer.nvidia.com/cuda-toolkit) 8.0 or above and at least [gcc](https://gcc.gnu.org/) 5.3 (choose based on cuda version).
+  * Build: Define the environment varables GPU_LIBRARY_PATH and GPU_INCLUDE_PATH before build it.
+  * Example: Build on summit. 
   ```zsh
   module load cuda 
   export GPU_LIBRARY_PATH=/sw/summit/cuda/10.1.243/lib64 
@@ -48,9 +48,9 @@ Steps to build the CUDA, HIP, and Kokkos version of miniAD
 ```diff 
 + HIP version 
 ```
-  * Prerequisites: [rocm](https://github.com/RadeonOpenCompute/ROCm) 3.7 or above and at least [gcc](https://gcc.gnu.org/) 7.2 (choose based on rocm version)
-  * Build: define the environment varables HIP_PLATFORM, GPU_LIBRARY_PATH and GPU_INCLUDE_PATH before build it
-  * Example: build on CoE  
+  * Prerequisites: [rocm](https://github.com/RadeonOpenCompute/ROCm) 3.7 or above and at least [gcc](https://gcc.gnu.org/) 7.2 (choose based on rocm version).
+  * Build: Define the environment varables HIP_PLATFORM, GPU_LIBRARY_PATH and GPU_INCLUDE_PATH before build it.
+  * Example: Build on Frontier Center of Excellence (CoE).  
   ```zsh
   ROCMV=3.7.0 
   PLATFORM=hcc 
@@ -64,9 +64,9 @@ Steps to build the CUDA, HIP, and Kokkos version of miniAD
 ```diff 
 + Kokkos version 
 ```
-  * Prerequisites: built [kokkos](https://github.com/kokkos/kokkos) with the specific backend, [rocm](https://github.com/RadeonOpenCompute/ROCm) 3.7 or above, [cuda](https://developer.nvidia.com/cuda-toolkit) 8.0 or above, and [gcc](https://gcc.gnu.org/) 6.1 or above
-  * Build: define the environment varables KOKKOS_SRC_DIR, KOKKOS_LIB_PATH and KOKKOS_INC_PATH before build it 
-  * Example: build kokkos with HIP backend version on CoE 
+  * Prerequisites: Built [kokkos](https://github.com/kokkos/kokkos) with the specific backend, [rocm](https://github.com/RadeonOpenCompute/ROCm) 3.7 or above, [cuda](https://developer.nvidia.com/cuda-toolkit) 8.0 or above, and [gcc](https://gcc.gnu.org/) 6.1 or above.
+  * Build: Define the environment varables KOKKOS_SRC_DIR, KOKKOS_LIB_PATH and KOKKOS_INC_PATH before build it. 
+  * Example: Build kokkos with HIP backend version on Frontier Center of Excellence (CoE). 
   ```zsh
   ROCMV=3.7.0 
   module load rocm/${ROCMV} cuda10.2/toolkit 
