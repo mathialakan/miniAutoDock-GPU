@@ -23,8 +23,9 @@ ifeq ($(CARD), AMD)
   CPP = $(HIP_PATH)/bin/hipcc -std=c++14
   endif
 else
-#export NVCC_WRAPPER_DEFAULT_COMPILER=mpiCC
-  CPP = $(KOKKOS_SRC_DIR)/bin/nvcc_wrapper -std=c++14 --expt-extended-lambda -arch=sm_70
+  export NVCC_WRAPPER_DEFAULT_COMPILER=mpiCC
+  CPP = $(KOKKOS_SRC_DIR)/bin/nvcc_wrapper -mp -std=c++11 --expt-extended-lambda -arch=sm_70
+  #CPP = $(KOKKOS_SRC_DIR)/bin/nvcc_wrapper -std=c++14 --expt-extended-lambda -arch=sm_70
 endif
 
 # ------------------------------------------------------
