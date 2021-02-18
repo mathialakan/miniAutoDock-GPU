@@ -20,7 +20,6 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
                 int lidx = team_member.league_rank();
 		int team_size = team_member.team_size();
 		int run_id = lidx / docking_params.num_of_lsentities;
-                float gene_scale = 1.0f/sqrt((float)docking_params.num_of_genes);
 
 		// Locally shared: global index in population
 		OneInt gpop_idx(team_member.team_scratch(KOKKOS_TEAM_SCRATCH_OPT));
@@ -85,7 +84,7 @@ void solis_wets(Generation<Device>& next, Dockpars* mypars,DockingParams<Device>
 			// New random deviate
 			float good_dir = 1.0f;
 			for (int gene_cnt = tidx; gene_cnt < docking_params.num_of_genes; gene_cnt+= team_size) {
-				genotype_deviate[gene_cnt] = rho(0)*(2*rand_float(team_member, docking_params)-1)*(rand_float(team_member, docking_params)<0.12f);
+				genotype_deviate[gene_cnt] = rho(0)*(2*rand_float(team_member, docking_params)-1)*(rand_float(team_member, docking_params)<0.09f);
 
 				if (gene_cnt < 3) { // Translation genes
 					genotype_deviate[gene_cnt] *= docking_params.base_dmov_mul_sqrt3;
