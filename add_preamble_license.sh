@@ -21,18 +21,20 @@ HOST_HEADERS="$HOST_HEADER_DIR/*.h"
 HOST_SOURCE_DIR="./host/src"
 HOST_SOURCES="$HOST_SOURCE_DIR/*.cpp"
 
-# wrapcl-header files
+# framework-header files
 Kokkos_HEADER_DIR="./framework/kokkos"
-Kokkos_HEADERS="$Kokkos_HEADER_DIR/*.hpp"
+CPPSTDPAR_HEADER_DIR="./framework/cpp_std_par/inc"
+FW_HEADERS="$Kokkos_HEADER_DIR/*.hpp $CPPSTDPAR_HEADER_DIR/*.hpp"
 
-# wrapcl-source files
+# framework-source files
 Kokkos_SOURCE_DIR="./framework/kokkos"
-Kokkos_SOURCES="$Kokkos_SOURCE_DIR/*.tpp"
+CPPSTDPAR_SOURCE_DIR="./framework/cpp_std_par/src"
+FW_SOURCES="$Kokkos_SOURCE_DIR/*.tpp $CPPSTDPAR_SOURCE_DIR/*.cpp"
 
 # full list of source files
 #AUTODOCKGPU_SOURCE="$KRNL_HEADER_DIR/*.h $KRNL_SOURCE_DIR/*.cl $HOST_HEADER_DIR/*.h $HOST_SOURCE_DIR/*.cpp"
 
-AUTODOCKGPU_SOURCE="$KRNL_HEADERS $KRNL_SOURCES $HOST_HEADERS $HOST_SOURCES $Kokkos_HEADERS $Kokkos_SOURCES"
+AUTODOCKGPU_SOURCE="$KRNL_HEADERS $KRNL_SOURCES $HOST_HEADERS $HOST_SOURCES $FW_HEADERS $FW_SOURCES"
 
 # Print variables
 #echo $KRNL_HEADER_DIR/*.h

@@ -1,6 +1,6 @@
 /*
 
-AutoDock-GPU, an OpenCL implementation of AutoDock 4.2 running a Lamarckian Genetic Algorithm
+miniAD is a miniapp of the GPU version of AutoDock 4.2 running a Lamarckian Genetic Algorithm
 Copyright (C) 2017 TU Darmstadt, Embedded Systems and Applications Group, Germany. All rights reserved.
 For some of the code, Copyright (C) 2019 Computational Structural Biology Center, the Scripps Research Institute.
 
@@ -94,7 +94,9 @@ int get_filenames_and_ADcoeffs(const int* argc,
 	//ffile_given = 1;
 	lfile_given = 0;
 
-	strcpy(mypars->fldfile, "./input/7cpa/7cpa_protein.maps.fld");
+	//strcpy(mypars->fldfile, "./input/7cpa/7cpa_protein.maps.fld");
+	strcpy(mypars->fldfile, "./input/3er5/protein.maps.fld");
+	//strcpy(mypars->fldfile, "./input/nsc1620/protein.maps.fld");
 
 	for (i=1; i<(*argc)-1; i++)
 	{
