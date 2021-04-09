@@ -26,31 +26,35 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <Kokkos_Core.hpp>
 
 // Declare the memory and execution spaces.
-#ifdef USE_GPU
-#ifdef CARD_AMD
- using MemSpace = Kokkos::Experimental::HIPSpace;
- using ExSpace = Kokkos::Experimental::HIP;
+
+#ifdef USE_OMPTARGET
+ using MemSpace = Kokkos::Experimental::OpenMPTargetSpace;
+ using ExSpace = Kokkos::Experimental::OpenMPTarget;
 #else
- using MemSpace = Kokkos::CudaSpace;
- using MemSpace_UVM = Kokkos::CudaUVMSpace;
- using ExSpace = Kokkos::Cuda;
- using DeviceType_UVM = Kokkos::Device<ExSpace,MemSpace_UVM>;
+ #ifdef USE_GPU
+  #ifdef CARD_AMD
+   using MemSpace = Kokkos::Experimental::HIPSpace;
+   using ExSpace = Kokkos::Experimental::HIP;
+  #else
+   using MemSpace = Kokkos::CudaSpace;
+   using MemSpace_UVM = Kokkos::CudaUVMSpace;
+   using ExSpace = Kokkos::Cuda;
+   using DeviceType_UVM = Kokkos::Device<ExSpace,MemSpace_UVM>;
+  #endif
+ #endif
 #endif
-#else
+
 #ifdef USE_OMP
-using MemSpace = Kokkos::HostSpace;
-using ExSpace = Kokkos::OpenMP;
+ using CPUSpace = Kokkos::HostSpace;
+ using CPUExec  = Kokkos::OpenMP;
 #else
-using MemSpace = Kokkos::HostSpace;
-using ExSpace = Kokkos::Serial;
+ using CPUSpace = Kokkos::HostSpace;
+ using CPUExec = Kokkos::Serial;
 #endif
-#endif
+
 using DeviceType = Kokkos::Device<ExSpace,MemSpace>;
 
-
 // Designate a CPU-specific Memory and Execution space
-using CPUSpace = Kokkos::HostSpace;
-using CPUExec = Kokkos::Serial;
 using HostType = Kokkos::Device<CPUExec,CPUSpace>;
 
 // TODO: The two typedefs below use ExSpace, which negates the point of templating everything since now
