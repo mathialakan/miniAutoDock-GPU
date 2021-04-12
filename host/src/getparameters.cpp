@@ -94,8 +94,8 @@ int get_filenames_and_ADcoeffs(const int* argc,
 	//ffile_given = 1;
 	lfile_given = 0;
 
-	//strcpy(mypars->fldfile, "./input/7cpa/7cpa_protein.maps.fld");
-	strcpy(mypars->fldfile, "./input/3er5/protein.maps.fld");
+	strcpy(mypars->fldfile, "./input/7cpa/7cpa_protein.maps.fld");
+	//strcpy(mypars->fldfile, "./input/3er5/protein.maps.fld");
 	//strcpy(mypars->fldfile, "./input/nsc1620/protein.maps.fld");
 
 	for (i=1; i<(*argc)-1; i++)
